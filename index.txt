@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò chơi đoán xu</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: 2px solid black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="game">
+        <h2>Trò chơi đoán xu</h2>
+        <p id="money">Số tiền: 500000đ</p>
+        <p id="mission">Nhiệm vụ: Thắng 3 lần để nhận 30.000đ</p>
+        <input type="number" id="bet" placeholder="Nhập số tiền cược" />
+        <div>
+            <div class="button" onclick="play('Tài')">Tài</div>
+            <div class="button" onclick="play('Xỉu')">Xỉu</div>
+        </div>
+        <p id="result"></p>
+        <p id="wins">Số lần thắng: 0</p>
+        <p id="reward"></p>
+        <p id="countdown"></p>
+    </div>
+
+    <script>
+        let money = 500.000;
+        let wins = 0;
+        let sequences = ['Tài','Tài','Tài','Xỉu','Xỉu','Xỉu','Xỉu','Xỉu','Tài','Xỉu','Tài','Xỉu'];
+        let index = 0;
+
+        function play(choice) {
+            let bet = parseInt(document.getElementById('bet').value) || 0;
+            if (bet <= 0 || bet > money) {
+                alert('Số tiền cược không đủ!');
+                return;
+            }
+
+            let result = sequences[index % sequences.length];
+            index++;
+
+            let isWin = choice === result;
+
+            if (isWin) {
+                money += bet;
+                wins++;
+                document.getElementById('result').innerText = `Bạn đã thắng! Kết quả: ${result}`;
+            } else {
+                money -= bet;
+                wins = 0;
+                document.getElementById('result').innerText = `Bạn đã thua! Kết quả: ${result}`;
+            }
+
+            document.getElementById('money').innerText = `Số tiền: ${money}đ`;
+            document.getElementById('wins').innerText = `Số lần thắng: ${wins}`;
+
+            if (wins === 3) {
+                document.getElementById('reward').innerText = 'Bạn nhận được 30.000đ! Nhấn để nhận';
+                document.getElementById('reward').onclick = function() {
+                    money += 30000;
+                    document.getElementById('money').innerText = `Số tiền: ${money}đ`;
+                    wins = 0;
+                    document.getElementById('wins').innerText = `Số lần thắng: ${wins}`;
+                    document.getElementById('reward').innerText = '';
+                };
+            }
+        }
+
+        function countdown() {
+            let time = 30;
+            const timer = setInterval(() => {
+                document.getElementById('countdown').innerText = `Thời gian: ${time}s`;
+                if (time <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('countdown').innerText = '';
+                }
+                time--;
+            }, 1000);
+        }
+
+        countdown();
+    </script>
+</body>
+</html>
